@@ -2,8 +2,6 @@
 
 use std::net::TcpListener;
 
-use reqwest::Client;
-
 // Launch our application in the background ~somehow~
 // No .await call, therefore no need for `spawn_app` to be async now.
 // We are also running tests, so it's not worth it to propagate errors
