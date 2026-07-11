@@ -1,24 +1,20 @@
 //! src/lib.rs
-
-use actix_web::{App, HttpResponse, HttpServer, Responder, dev::Server, web};
+use actix_web::dev::Server;
+use actix_web::{web, App, HttpResponse, HttpServer};
 use std::net::TcpListener;
 
-async fn health_check() -> impl Responder {
+// We were returnting impl Responder at the very beginning.
+// We are now spelling out the type explicitly given that we have
+// become more familiar with `actix-web`.
+// There is no performance difference! Just a stylistic choice :)
+async fn health_check() -> HttpResponse {
     HttpResponse::Ok().finish()
 }
 
-// // We need to mark `run` as public.
-// // It is no longer a binary entrypoint, therefore we can mark it as async
-// // without having to use any proc-macro incantation.
-// pub async fn run() -> Result<(), std::io::Error> {
-// HttpServer::new( || {
-//             App::new()
-//             .route("/health_check", web::get().to(health_check))
-//     })
-//     .bind("127.0.0.1:8000")?
-//     .run()
-//     .await
-// }
+// Let's start simple: we always return a 200 OK
+async fn subscribe() -> HttpResponse {
+    HttpResponse::Ok().finish()
+}
 
 // Notice the different signature!
 // We return `Server` on the happy path and we dropped the `async` keyword
@@ -27,6 +23,7 @@ pub fn run(listener: TcpListener) -> Result<Server, std::io::Error> {
     let server = HttpServer::new( || {
         App::new()
         .route("health_check", web::get().to(health_check))
+        .route("/subscriptions", web::post().to(subscribe))
     })
     .listen(listener)?
     .run();
