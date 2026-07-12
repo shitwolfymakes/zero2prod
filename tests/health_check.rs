@@ -1,7 +1,8 @@
 //! tests/health_check.rs
 
 use std::net::TcpListener;
-use zero2prod::startup::run;
+use sqlx::{Connection, PgConnection};
+use zero2prod::{configuration::{self, get_configuration}, startup::run};
 
 // Launch our application in the background ~somehow~
 // No .await call, therefore no need for `spawn_app` to be async now.
@@ -49,6 +50,14 @@ async fn health_check_works() {
 async fn subscribe_returns_a_200_for_valid_form_data() {
     // arrange
     let app_address = spawn_app();
+    let configuration = get_configuration().expect("Failed to get configuration");
+    let connection_string = configuration.database.connection_string();
+    // The `Connection` trait MUST be in scope for us to invoke
+    // `PgConnection::connect` - it is not an inherent method of the struct!
+    // the connection has to be marked as mutable!
+    let mut connection = PgConnection::connect(&connection_string)
+        .await
+        .expect("Failed to connect to Postgres.");
     let client = reqwest::Client::new();
 
     // act
@@ -62,7 +71,15 @@ async fn subscribe_returns_a_200_for_valid_form_data() {
         .expect("Failed to execute request.");
 
     // Assert
-    assert_eq!(200, response.status().as_u16())
+    assert_eq!(200, response.status().as_u16());
+
+    let saved = sqlx::query!("SELECT email, name FROM subscriptions",)
+        .fetch_one(&mut connection)
+        .await
+        .expect("Failed to fetch saved subscription");
+
+    assert_eq!(saved.email, "ursula_k_le_guin@gmail.com");
+    assert_eq!(saved.name, "le guin");
 }
 
 #[tokio::test]
