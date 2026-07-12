@@ -2,7 +2,8 @@
 
 use std::net::TcpListener;
 use sqlx::{Connection, PgConnection};
-use zero2prod::{configuration::{self, get_configuration}, startup::run};
+use zero2prod::configuration::get_configuration;
+use zero2prod::startup::run;
 
 // Launch our application in the background ~somehow~
 // No .await call, therefore no need for `spawn_app` to be async now.
