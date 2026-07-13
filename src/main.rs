@@ -1,9 +1,9 @@
 //! src/main.rs
 use std::net::TcpListener;
-use env_logger::Env;
 use sqlx::PgPool;
-use tracing::subscriber::{self, set_global_default};
+use tracing::subscriber::set_global_default;
 use tracing_bunyan_formatter::{BunyanFormattingLayer, JsonStorageLayer};
+use tracing_log::LogTracer;
 use tracing_subscriber::{layer::SubscriberExt, EnvFilter, Registry};
 
 use zero2prod::startup::run;
@@ -11,7 +11,8 @@ use zero2prod::configuration::get_configuration;
 
 #[tokio::main]
 async fn main() -> Result<(), std::io::Error> {
-    // we removed the `env_logger`
+    // redirect all `log`'s events to our subscriber
+    LogTracer::init().expect("Failed to set logger");
 
     // we are falling back to printing all spans at info-level or above
     // if the RUST_LOG environment variable has not been set
