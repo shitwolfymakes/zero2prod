@@ -15,7 +15,6 @@ pub struct FormData {
     skip(form, pool),
     fields(
         // % tells `tracing` to use their Display impl for logging purposes
-        request_id = %Uuid::new_v4(),
         subscriber_email = %form.email,
         subscriber_name = %form.name,
     )
