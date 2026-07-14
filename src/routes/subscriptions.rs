@@ -29,8 +29,6 @@ pub async fn subscribe(
         Ok(_) => HttpResponse::Ok().finish(),
         Err(_) => HttpResponse::InternalServerError().finish()
     }
-    // `_request_span_guard` is dropped at the end of `subscribe`
-    // that's where we "exit" the span
 }
 
 #[tracing::instrument(
