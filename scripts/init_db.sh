@@ -29,6 +29,11 @@ DB_HOST="${POSTGRES_HOST:=localhost}"
 
 # skip docker if a containerized Postgres db is already running
 if [[ -z "${SKIP_DOCKER}" ]]; then
+    if [ "${EUID:-$(id -u)}" -eq 0 ]; then
+        echo >&2 "Error: do not run the Postgres container with sudo/as root."
+        echo >&2 "Add your user to the 'docker' group instead: sudo usermod -aG docker \$USER"
+        exit 1
+    fi
     docker run \
         --name postgres \
         -e POSTGRES_USER=${DB_USER} \
