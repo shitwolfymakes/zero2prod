@@ -1,3 +1,7 @@
 # configuration/production.yaml
 application:
   host: 0.0.0.0
+
+# SPECIFIC TO DOCKER COMPOSE DEPLOYMENT VARIANT
+database:
+  host: "db"
