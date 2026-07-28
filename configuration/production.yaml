@@ -5,3 +5,4 @@ application:
 # SPECIFIC TO DOCKER COMPOSE DEPLOYMENT VARIANT
 database:
   host: "db"
+  require_ssl: false
