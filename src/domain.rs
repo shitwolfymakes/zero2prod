@@ -38,4 +38,26 @@ impl SubscriberName {
             Self(s)
         }
     }
+
+    // pub fn inner(&self) -> String {
+    //     // The caller gets the inner string
+    //     // but they do not have a SubscriberName anymore!
+    //     // That's because `inner` takes `self` by value,
+    //     // consuming it according to move semantics
+    //     self.0
+    // }
+
+    pub fn inner_mut(&mut self) -> &mut str {
+        // The caller gets a mutable reference to the inner string.
+        // This allows them to perform *arbitrary* changes to the
+        // value itself, potentially breaking out invariants!
+        &mut self.0
+    }
+
+    pub fn inner_ref(&self) -> &str {
+        // The caller gets a shared reference to the inner string.
+        // This allows the caller **read-only** access,
+        // they have no way to compromise our invariants!
+        &self.0
+    }
 }
